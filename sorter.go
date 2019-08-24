@@ -1,5 +1,9 @@
 package gomodprivate
 
+import (
+	"strings"
+)
+
 type stringSort []string
 
 // Len is the number of elements in the collection.
@@ -10,7 +14,7 @@ func (s stringSort) Len() int {
 // Less reports whether the element with
 // index i should sort before the element with index j.
 func (s stringSort) Less(i int, j int) bool {
-	return s[i] < s[j]
+	return strings.Compare(s[i], s[j]) < 0
 }
 
 // Swap swaps the elements with indexes i and j.
@@ -28,7 +32,7 @@ func (s sshCredentialSort) Len() int {
 // Less reports whether the element with
 // index i should sort before the element with index j.
 func (s sshCredentialSort) Less(i int, j int) bool {
-	return s[i].Host < s[j].Host
+	return strings.Compare(s[i].Matcher, s[j].Matcher) < 0
 }
 
 // Swap swaps the elements with indexes i and j.

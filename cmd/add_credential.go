@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"fmt"
+
 	gmp "github.com/firmanmm/go-mod-private"
 	"github.com/urfave/cli"
 )
@@ -17,8 +19,12 @@ func (a *AddCredentialCmd) Run(ctx *cli.Context) error {
 	host := ctx.String("host")
 	user := ctx.String("user")
 	base := ctx.String("base")
+	matcher := ctx.String("pattern")
+	if len(matcher) == 0 {
+		matcher = fmt.Sprintf("%s(.*)", host)
+	}
 
-	if err := a.setting.AddCredential(host, user, base); err != nil {
+	if err := a.setting.AddCredential(matcher, host, user, base); err != nil {
 		return err
 	}
 
@@ -44,7 +50,10 @@ func (a *AddCredentialCmd) Init() cli.Command {
 			cli.StringFlag{
 				Name:  "base",
 				Usage: "Base path for traversal, user@host:[base]",
-				Value: "",
+			},
+			cli.StringFlag{
+				Name:  "pattern",
+				Usage: "Pattern to be used to match dependency, Default will be [host](.*)",
 			},
 		},
 	}

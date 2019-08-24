@@ -15,15 +15,14 @@ type SettingData struct {
 	PrivateRepositories []string
 }
 
-func (s *SettingData) GetMatchingCredential(host string) *SshCredential {
+func (s *SettingData) GetMatchingCredential(request string) *SshCredential {
 	lastMatchIdx := -1
 	lastLength := 0
-	postFixPattern := "(.*)"
 	for idx, credential := range s.SshCredentials {
-		if lastLength >= len(credential.Host) {
+		if lastLength >= len(credential.Matcher) {
 			continue
 		}
-		isMatch, err := regexp.MatchString(credential.Host+postFixPattern, host)
+		isMatch, err := regexp.MatchString(credential.Matcher, request)
 		if err != nil {
 			log.Fatalln(err.Error())
 		}
@@ -53,13 +52,14 @@ func (s *Setting) GetMatchingCredential(name string) *SshCredential {
 	return s.data.GetMatchingCredential(name)
 }
 
-func (s *Setting) AddCredential(host, username, basePath string) error {
-	if sort.Search(len(s.data.SshCredentials), func(i int) bool {
-		return s.data.SshCredentials[i].Host == host
-	}) >= 0 {
-		return errors.New("Duplicate credential, skipping")
+func (s *Setting) AddCredential(matcher, host, username, basePath string) error {
+	if idx := sort.Search(len(s.data.SshCredentials), func(i int) bool {
+		return s.data.SshCredentials[i].Matcher >= matcher
+	}); idx < len(s.data.SshCredentials) && s.data.SshCredentials[idx].Matcher == matcher {
+		return errors.New("Duplicate credential with the same matcher, skipping")
 	}
 	s.data.SshCredentials = append(s.data.SshCredentials, &SshCredential{
+		Matcher:  matcher,
 		Host:     host,
 		Username: username,
 		BasePath: basePath,
@@ -69,7 +69,7 @@ func (s *Setting) AddCredential(host, username, basePath string) error {
 }
 
 func (s *Setting) AddRepository(name string) error {
-	if sort.SearchStrings(s.data.PrivateRepositories, name) < len(s.data.PrivateRepositories) {
+	if idx := sort.SearchStrings(s.data.PrivateRepositories, name); idx < len(s.data.PrivateRepositories) && s.data.PrivateRepositories[idx] == name {
 		return errors.New("Repository already exist")
 	}
 	s.data.PrivateRepositories = append(s.data.PrivateRepositories, name)
@@ -106,6 +106,7 @@ func (s *Setting) LoadFromFile(fileName string) error {
 		return err
 	}
 	settingData := NewSettingData()
+	s.data = settingData
 	return json.Unmarshal(body, settingData)
 }
 
@@ -116,6 +117,7 @@ func NewSetting() *Setting {
 }
 
 type SshCredential struct {
+	Matcher  string
 	Host     string
 	Username string
 	BasePath string
