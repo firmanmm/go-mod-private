@@ -1,6 +1,7 @@
-package main
+package cmd
 
 import (
+	"errors"
 	"log"
 
 	gmp "github.com/firmanmm/go-mod-private"
@@ -14,28 +15,26 @@ type GetCmd struct {
 
 func (g *GetCmd) Run(ctx *cli.Context) error {
 	gompConf := ctx.GlobalString("gomp")
-	if len(gompConf) == 0 {
-		gompConf = "mod.gomp"
-	}
 	if err := g.setting.LoadFromFile(gompConf); err != nil {
 		return err
 	}
 	args := ctx.Args()
-	trailing := args.Tail()
-	log.Println(trailing)
-	//return g.setting.SaveToFile(gompConf)
-	return nil
+	if len(args) == 0 {
+		return errors.New("Arguments required")
+	}
+	for _, arg := range args {
+		if err := g.getter.Get(arg); err != nil {
+			log.Printf("Error when trying to get from %s, error : %s", arg, err.Error())
+		}
+	}
+	return g.setting.SaveToFile(gompConf)
 }
 
 func (g *GetCmd) Init() cli.Command {
 	return cli.Command{
-		Name:  "get",
-		Usage: "Perform Go Get operation and switch to ssh if a matching SSH Credential has been registered",
-		Subcommands: []cli.Command{
-			cli.Command{
-				Action: g.Run,
-			},
-		},
+		Name:   "get",
+		Usage:  "Perform Go Get operation, will switch to git clone and git pull if a matching SSH Credential has been registered",
+		Action: g.Run,
 	}
 }
 
