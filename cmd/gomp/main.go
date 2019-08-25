@@ -15,9 +15,11 @@ func main() {
 
 	setting := gmp.NewSetting()
 	getter := gmp.NewGetterManager(setting)
+	syncMgr := gmp.NewSyncManager(setting, getter)
 
 	getCmd := cmd.NewGetCmd(setting, getter)
 	addCredentialCmd := cmd.NewAddCredentialCmd(setting)
+	syncCmd := cmd.NewSyncCmd(syncMgr)
 
 	cliApp := cli.NewApp()
 	cliApp.Name = "GoModPrivate"
@@ -28,6 +30,7 @@ func main() {
 	cliApp.Commands = []cli.Command{
 		getCmd.Init(),
 		addCredentialCmd.Init(),
+		syncCmd.Init(),
 	}
 	cliApp.Flags = []cli.Flag{
 		cli.StringFlag{

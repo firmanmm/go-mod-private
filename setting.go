@@ -69,12 +69,15 @@ func (s *Setting) AddCredential(matcher, host, username, basePath string) error 
 }
 
 func (s *Setting) AddRepository(name string) error {
-	if idx := sort.SearchStrings(s.data.PrivateRepositories, name); idx < len(s.data.PrivateRepositories) && s.data.PrivateRepositories[idx] == name {
-		return errors.New("Repository already exist")
+	if idx := sort.SearchStrings(s.data.PrivateRepositories, name); idx == len(s.data.PrivateRepositories) {
+		s.data.PrivateRepositories = append(s.data.PrivateRepositories, name)
+		sort.Sort(stringSort(s.data.PrivateRepositories))
 	}
-	s.data.PrivateRepositories = append(s.data.PrivateRepositories, name)
-	sort.Sort(stringSort(s.data.PrivateRepositories))
 	return s.modUpdater.Update(s.data.PrivateRepositories)
+}
+
+func (s *Setting) GetAllRepositories() []string {
+	return s.data.PrivateRepositories
 }
 
 func (s *Setting) SaveToFile(fileName string) error {
@@ -113,6 +116,7 @@ func (s *Setting) LoadFromFile(fileName string) error {
 func NewSetting() *Setting {
 	instance := new(Setting)
 	instance.data = NewSettingData()
+	instance.modUpdater = NewModUpdater()
 	return instance
 }
 

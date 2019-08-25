@@ -1,6 +1,7 @@
 package gomodprivate
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"os/exec"
@@ -38,11 +39,11 @@ type SshFetcher struct {
 
 func (s *SshFetcher) Fetch() error {
 	targetDir := fmt.Sprintf("./vendor.gomp/%s", s.name)
-	if err := s.PrepareDir(targetDir); err != nil {
+	if err := os.MkdirAll(targetDir, os.ModeDir); err != nil {
 		return err
 	}
 
-	if _, err := os.Lstat(targetDir + "/.git"); err != nil {
+	if _, err := os.Lstat(targetDir + "/.git"); err == nil {
 		return s.update(targetDir)
 	}
 
@@ -57,7 +58,25 @@ func (s *SshFetcher) Fetch() error {
 		return err
 	}
 	eCmd.Dir = cleanDir
-	return eCmd.Run()
+
+	if eCmd.Run() == nil {
+		return nil
+	}
+
+	eCmd = exec.Command("git", []string{
+		"clone",
+		s.connString + ".git",
+	}...)
+	eCmd.Stdout = os.Stdout
+	eCmd.Stderr = os.Stderr
+	if err != nil {
+		return err
+	}
+	eCmd.Dir = cleanDir
+	if eCmd.Run() == nil {
+		return nil
+	}
+	return errors.New("Failed to Fetch from SSH, check if you have correct access, or path is valid")
 }
 
 func (s *SshFetcher) update(dir string) error {
