@@ -79,7 +79,7 @@ replace (
 	removerPattern := fmt.Sprintf(`(%s([\s\S]*)%s)|[\n]+`, instance.prefixMessage, instance.postfixMessage)
 	replacerPattern := regexp.MustCompile("/")
 	removerPattern = replacerPattern.ReplaceAllString(removerPattern, "\\/")
-	instance.requireMatcher = regexp.MustCompile(`require.*\([\sa-zA-Z0-9\/\-._]+\)`)
+	instance.requireMatcher = regexp.MustCompile(`require.*\([\sa-zA-Z0-9\/\-\.\_\+]+\)`)
 	instance.requireRemover = regexp.MustCompile(`(require[ ]+\(|\))`)
 	requirePackageRemoverPattern := fmt.Sprintf(`(.*)%s[\s]+`, instance.requireMessage)
 	requirePackageRemoverPattern = replacerPattern.ReplaceAllString(requirePackageRemoverPattern, "\\/")
