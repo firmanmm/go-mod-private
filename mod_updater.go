@@ -31,7 +31,7 @@ func (m *ModUpdater) Update(repositories []string) error {
 	if err != nil {
 		return err
 	}
-	replaced := m.remover.ReplaceAllString(string(body), "")
+	replaced := m.remover.ReplaceAllString(string(body), "\n")
 	replaced = m.endLineRemover.ReplaceAllString(replaced, "\n")
 	requireText := m.requireMatcher.FindString(replaced)
 	replaced = m.requireMatcher.ReplaceAllString(replaced, "")
@@ -53,7 +53,7 @@ func NewModUpdater() *ModUpdater {
 	instance := new(ModUpdater)
 	templateData := `{{.GoModBody}}
 require (
-	{{.GoGetRepository}}
+{{.GoGetRepository}}
 	{{ range $idx, $repo := .Repositories }}{{ $repo }} v0.0.0 {{$.Requirefix}}{{ end }}
 )
 {{.Prefix}}
@@ -76,7 +76,7 @@ replace (
 	instance.prefixMessage = "//GO_MOD_PRIVATE_START"
 	instance.postfixMessage = "//GO_MOD_PRIVATE_END"
 	instance.requireMessage = `//GO_MOD_PRIVATE_REQUIRE`
-	removerPattern := fmt.Sprintf(`(%s([\s\S]*)%s)|[\n]{3,}`, instance.prefixMessage, instance.postfixMessage)
+	removerPattern := fmt.Sprintf(`(%s([\s\S]*)%s)|[\n]+`, instance.prefixMessage, instance.postfixMessage)
 	replacerPattern := regexp.MustCompile("/")
 	removerPattern = replacerPattern.ReplaceAllString(removerPattern, "\\/")
 	instance.requireMatcher = regexp.MustCompile(`require.*\([\sa-zA-Z0-9\/\-._]+\)`)
@@ -84,7 +84,7 @@ replace (
 	requirePackageRemoverPattern := fmt.Sprintf(`(.*)%s[\s]+`, instance.requireMessage)
 	requirePackageRemoverPattern = replacerPattern.ReplaceAllString(requirePackageRemoverPattern, "\\/")
 	instance.requirePackageRemover = regexp.MustCompile(requirePackageRemoverPattern)
-	instance.endLineRemover = regexp.MustCompile(`(.*\t\n)|(\n{3,}\t*)`)
+	instance.endLineRemover = regexp.MustCompile(`(\n+)`)
 	instance.remover = regexp.MustCompile(removerPattern)
 	return instance
 }
