@@ -50,7 +50,7 @@ func NewModUpdater() *ModUpdater {
 
 replace (
 	{{ range $idx, $repo := .Repositories }}
-	{{ $repo }} => ./vendor.gomp/{{ $repo }}{{ end }}
+	{{ $repo }} => vendor.gomp/{{ $repo }}{{ end }}
 	
 )
 {{.Postfix}}
