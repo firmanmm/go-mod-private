@@ -26,8 +26,9 @@ func (s *SyncCmd) Init() cli.Command {
 	}
 }
 
-func NewSyncCmd(syncMgr *gmp.SyncManager) *SyncCmd {
+func NewSyncCmd(setting *gmp.Setting, syncMgr *gmp.SyncManager) *SyncCmd {
 	instance := new(SyncCmd)
 	instance.syncMgr = syncMgr
+	instance.setting = setting
 	return instance
 }

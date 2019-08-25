@@ -19,7 +19,7 @@ func main() {
 
 	getCmd := cmd.NewGetCmd(setting, getter)
 	addCredentialCmd := cmd.NewAddCredentialCmd(setting)
-	syncCmd := cmd.NewSyncCmd(syncMgr)
+	syncCmd := cmd.NewSyncCmd(setting, syncMgr)
 
 	cliApp := cli.NewApp()
 	cliApp.Name = "GoModPrivate"
