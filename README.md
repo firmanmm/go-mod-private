@@ -68,10 +68,10 @@ Syntax :
 ```
 $ gomp add_credential --host=[Required] --user=[Required] --base=[Optional] --pattern=[Optional]
 ```
-`--host` : Your target host. **Required**
-`--user` : Your target user. **Required**
-`--base` : Base path for searching for package.
-`--pattern` : Will be used to match your requested package with this credential.
+- `--host` : Your target host. **Required**
+- `--user` : Your target user. **Required**
+- `--base` : Base path for searching for package.
+- `--pattern` : Will be used to match your requested package with this credential.
 Example : 
 ```
 $ gomp add_credential --host=rendoru.com --user=someone --base=/home/someone --pattern="rendoru.com(.*)"
