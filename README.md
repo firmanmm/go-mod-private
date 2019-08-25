@@ -4,7 +4,7 @@ A simple helper toolkit to help development with Private Git Server using Golang
 *Note* : Currently `gomp` didn't support `./...` operation.
 
 ## Installation
-Before installing `gomp`, you have to make sure that you have `git` and `go version 1.12` installed on your system.
+Before installing `gomp`, you have to make sure that you have `git` installed on your system.
 To install `gomp` command line interface, simply use syntax below :
 ```
 go get -u github.com/firmanmm/go-mod-private/cmd/gomp

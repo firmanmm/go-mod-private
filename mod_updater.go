@@ -48,9 +48,15 @@ func NewModUpdater() *ModUpdater {
 //For more information visit https://github.com/firmanmm/go-mod-private
 //Please add *.gomp to your .gitignore since any .gomp files is meant to be used locally
 
+require (
+	{{ range $idx, $repo := .Repositories }}
+	{{ $repo }} v0.0.0{{ end }}
+	
+)
+
 replace (
 	{{ range $idx, $repo := .Repositories }}
-	{{ $repo }} => vendor.gomp/{{ $repo }}{{ end }}
+	{{ $repo }} v0.0.0 => ./.vendor.gomp/{{ $repo }}{{ end }}
 	
 )
 {{.Postfix}}
@@ -63,7 +69,8 @@ replace (
 	instance.prefixMessage = "//GO_MOD_PRIVATE_START"
 	instance.postfixMessage = "//GO_MOD_PRIVATE_END"
 	removerPattern := fmt.Sprintf(`%s([\s\S]*)%s`, instance.prefixMessage, instance.postfixMessage)
-	removerPattern = strings.ReplaceAll(removerPattern, "/", "\\/")
+	replacerPattern := regexp.MustCompile("/")
+	removerPattern = replacerPattern.ReplaceAllString(removerPattern, "\\/")
 	instance.remover = regexp.MustCompile(removerPattern)
 	return instance
 }

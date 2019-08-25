@@ -38,7 +38,7 @@ type SshFetcher struct {
 }
 
 func (s *SshFetcher) Fetch() error {
-	targetDir := fmt.Sprintf("./vendor.gomp/%s", s.name)
+	targetDir := fmt.Sprintf("./.vendor.gomp/%s", s.name)
 	if err := os.MkdirAll(targetDir, os.ModeDir); err != nil {
 		return err
 	}
@@ -88,10 +88,6 @@ func (s *SshFetcher) update(dir string) error {
 	eCmd.Stderr = os.Stderr
 	eCmd.Dir = dir
 	return eCmd.Run()
-}
-
-func (b *SshFetcher) PrepareDir(name string) error {
-	return os.MkdirAll(fmt.Sprintf("./vendor.gomp/%s", name), os.ModeDir)
 }
 
 func NewSshFetcher(name, username, host, basePath string) *SshFetcher {
