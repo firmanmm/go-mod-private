@@ -35,10 +35,10 @@ func (g *ModfileModUpdater) Update(repositories []string) error {
 	}
 	for path, val := range repoMap {
 		if val {
-			if err := parsedFile.AddRequire(path, "v.gomp"); err != nil {
+			if err := parsedFile.AddRequire(path, "v0.0.0"); err != nil {
 				return err
 			}
-			if err := parsedFile.AddReplace(path, "v.gomp", "./.vendor.gomp/"+path, ""); err != nil {
+			if err := parsedFile.AddReplace(path, "v0.0.0", "./.vendor.gomp/"+path, ""); err != nil {
 				return err
 			}
 		}

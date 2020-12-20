@@ -67,10 +67,12 @@ func (s *Setting) AddCredential(matcher, host, username, basePath string) error 
 }
 
 func (s *Setting) AddRepository(name string) error {
-	if idx := sort.SearchStrings(s.data.PrivateRepositories, name); idx == len(s.data.PrivateRepositories) {
-		s.data.PrivateRepositories = append(s.data.PrivateRepositories, name)
-		sort.Sort(stringSort(s.data.PrivateRepositories))
+	for _, repo := range s.data.PrivateRepositories {
+		if repo == name {
+			return nil
+		}
 	}
+	s.data.PrivateRepositories = append(s.data.PrivateRepositories, name)
 	return s.modUpdater.Update(s.data.PrivateRepositories)
 }
 
@@ -114,7 +116,7 @@ func (s *Setting) LoadFromFile(fileName string) error {
 func NewSetting() *Setting {
 	instance := new(Setting)
 	instance.data = NewSettingData()
-	instance.modUpdater = NewRegexModUpdater()
+	instance.modUpdater = NewModfileModUpdater()
 	return instance
 }
 

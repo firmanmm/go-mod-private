@@ -85,7 +85,7 @@ func TestModfileModUpdater_Update(t *testing.T) {
 			finalRead := string(rawFinalRead)
 			for _, repo := range tt.args.repositories {
 				assert.Contains(t, finalRead, repo)
-				assert.Contains(t, finalRead, fmt.Sprintf("%s v.gomp => ./.vendor.gomp/%s", repo, repo))
+				assert.Contains(t, finalRead, fmt.Sprintf("%s v0.0.0 => ./.vendor.gomp/%s", repo, repo))
 			}
 		})
 	}
