@@ -7,7 +7,7 @@ A simple helper toolkit to help development with Private Git Server using Golang
 Before installing `gomp`, you have to make sure that you have `git` installed on your system.
 To install `gomp` command line interface, simply use syntax below :
 ```
-go get -u github.com/firmanmm/go-mod-private/cmd/gomp
+go get github.com/firmanmm/go-mod-private/cmd/gomp
 ```
 
 ## Usage

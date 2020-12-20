@@ -9,7 +9,7 @@ import (
 	"text/template"
 )
 
-type ModUpdater struct {
+type RegexModUpdater struct {
 	prefixMessage         string
 	postfixMessage        string
 	requireMessage        string
@@ -21,7 +21,7 @@ type ModUpdater struct {
 	endLineRemover        *regexp.Regexp
 }
 
-func (m *ModUpdater) Update(repositories []string) error {
+func (m *RegexModUpdater) Update(repositories []string) error {
 	file, err := os.OpenFile("go.mod", os.O_RDWR, 0644)
 	if err != nil {
 		return err
@@ -49,8 +49,8 @@ func (m *ModUpdater) Update(repositories []string) error {
 	})
 }
 
-func NewModUpdater() *ModUpdater {
-	instance := new(ModUpdater)
+func NewRegexModUpdater() *RegexModUpdater {
+	instance := new(RegexModUpdater)
 	templateData := `{{.GoModBody}}
 require (
 {{.GoGetRepository}}

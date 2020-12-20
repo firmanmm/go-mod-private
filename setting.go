@@ -2,7 +2,6 @@ package gomodprivate
 
 import (
 	"encoding/json"
-	"errors"
 	"io/ioutil"
 	"log"
 	"os"
@@ -43,8 +42,12 @@ func NewSettingData() *SettingData {
 	return instance
 }
 
+type IModUpdater interface {
+	Update([]string) error
+}
+
 type Setting struct {
-	modUpdater *ModUpdater
+	modUpdater IModUpdater
 	data       *SettingData
 }
 
@@ -53,11 +56,6 @@ func (s *Setting) GetMatchingCredential(name string) *SshCredential {
 }
 
 func (s *Setting) AddCredential(matcher, host, username, basePath string) error {
-	if idx := sort.Search(len(s.data.SshCredentials), func(i int) bool {
-		return s.data.SshCredentials[i].Matcher >= matcher
-	}); idx < len(s.data.SshCredentials) && s.data.SshCredentials[idx].Matcher == matcher {
-		return errors.New("Duplicate credential with the same matcher, skipping")
-	}
 	s.data.SshCredentials = append(s.data.SshCredentials, &SshCredential{
 		Matcher:  matcher,
 		Host:     host,
@@ -116,7 +114,7 @@ func (s *Setting) LoadFromFile(fileName string) error {
 func NewSetting() *Setting {
 	instance := new(Setting)
 	instance.data = NewSettingData()
-	instance.modUpdater = NewModUpdater()
+	instance.modUpdater = NewRegexModUpdater()
 	return instance
 }
 
