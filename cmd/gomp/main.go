@@ -25,7 +25,6 @@ func main() {
 	cliApp.Name = "GoModPrivate"
 	cliApp.Usage = "Go Module for Private Git Server Repository"
 	cliApp.Description = "Allow you to use Git Private Server as your source dependency while using Go Module"
-	cliApp.Email = "maulana.firman56@gmail.com"
 	cliApp.Author = `Firman "Rendoru" Maulana`
 	cliApp.Commands = []cli.Command{
 		getCmd.Init(),

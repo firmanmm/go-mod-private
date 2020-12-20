@@ -29,7 +29,7 @@ DESCRIPTION:
    Allow you to use Git Private Server as your source dependency while using Go Module
 
 AUTHOR:
-   Firman "Rendoru" Maulana <maulana.firman56@gmail.com>
+   Firman "Rendoru" Maulana 
 
 COMMANDS:
    get             Perform Go Get operation, will switch to git clone and git pull if a matching SSH Credential has been registered
