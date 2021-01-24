@@ -14,16 +14,23 @@ func TestModfileModUpdater_Update(t *testing.T) {
 		repositories []string
 		inputContent string
 	}
+
+	type want struct {
+		name    string
+		version string
+	}
+
 	tests := []struct {
 		name    string
 		args    args
+		wants   []want
 		wantErr bool
 	}{
 		{
 			"ValidFlow",
 			args{
 				[]string{
-					"rendoru.com/module/sync-mq",
+					"rendoru.com/module/sync-mq@v1.0.0",
 					"rendoru.com/tool/concurrent",
 				},
 				`
@@ -64,6 +71,16 @@ func TestModfileModUpdater_Update(t *testing.T) {
 				)			
 				`,
 			},
+			[]want{
+				{
+					"rendoru.com/module/sync-mq",
+					"v1.0.0",
+				},
+				{
+					"rendoru.com/tool/concurrent",
+					"v0.0.0",
+				},
+			},
 			false,
 		},
 	}
@@ -83,9 +100,10 @@ func TestModfileModUpdater_Update(t *testing.T) {
 			rawFinalRead, err := ioutil.ReadFile(testFileName)
 			assert.NoError(t, err)
 			finalRead := string(rawFinalRead)
-			for _, repo := range tt.args.repositories {
-				assert.Contains(t, finalRead, repo)
-				assert.Contains(t, finalRead, fmt.Sprintf("%s v0.0.0 => ./.vendor.gomp/%s", repo, repo))
+			fmt.Println(finalRead)
+			for _, want := range tt.wants {
+				assert.Contains(t, finalRead, want.name)
+				assert.Contains(t, finalRead, fmt.Sprintf("%s %s => ./.vendor.gomp/%s", want.name, want.version, want.name))
 			}
 		})
 	}

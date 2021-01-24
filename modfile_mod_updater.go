@@ -35,10 +35,17 @@ func (g *ModfileModUpdater) Update(repositories []string) error {
 	}
 	for path, val := range repoMap {
 		if val {
-			if err := parsedFile.AddRequire(path, "v0.0.0"); err != nil {
+			packageName, tag, err := _ExtractTag(path)
+			if err != nil {
 				return err
 			}
-			if err := parsedFile.AddReplace(path, "v0.0.0", "./.vendor.gomp/"+path, ""); err != nil {
+			if len(tag) == 0 {
+				tag = "v0.0.0"
+			}
+			if err := parsedFile.AddRequire(packageName, tag); err != nil {
+				return err
+			}
+			if err := parsedFile.AddReplace(packageName, tag, "./.vendor.gomp/"+path, ""); err != nil {
 				return err
 			}
 		}
