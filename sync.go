@@ -21,7 +21,7 @@ func (s *SyncManager) Sync() error {
 	if len(errorList) > 0 {
 		return errors.New(strings.Join(errorList, "\n"))
 	}
-	return nil
+	return s.setting.Sync()
 }
 
 func NewSyncManager(setting *Setting, getter *GetterManager) *SyncManager {

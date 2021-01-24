@@ -27,6 +27,9 @@ func (g *GetCmd) Run(ctx *cli.Context) error {
 			log.Printf("Error when trying to get from %s, error : %s", arg, err.Error())
 		}
 	}
+	if err := g.setting.Sync(); err != nil {
+		return err
+	}
 	return g.setting.SaveToFile(gompConf)
 }
 

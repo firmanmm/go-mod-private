@@ -100,7 +100,6 @@ func TestModfileModUpdater_Update(t *testing.T) {
 			rawFinalRead, err := ioutil.ReadFile(testFileName)
 			assert.NoError(t, err)
 			finalRead := string(rawFinalRead)
-			fmt.Println(finalRead)
 			for _, want := range tt.wants {
 				assert.Contains(t, finalRead, want.name)
 				assert.Contains(t, finalRead, fmt.Sprintf("%s %s => ./.vendor.gomp/%s", want.name, want.version, want.name))

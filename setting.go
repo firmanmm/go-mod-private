@@ -73,6 +73,10 @@ func (s *Setting) AddRepository(name string) error {
 		}
 	}
 	s.data.PrivateRepositories = append(s.data.PrivateRepositories, name)
+	return nil
+}
+
+func (s *Setting) Sync() error {
 	return s.modUpdater.Update(s.data.PrivateRepositories)
 }
 

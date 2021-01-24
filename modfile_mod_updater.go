@@ -33,22 +33,21 @@ func (g *ModfileModUpdater) Update(repositories []string) error {
 			repoMap[mod.Path] = false
 		}
 	}
-	for path, val := range repoMap {
-		if val {
-			packageName, tag, err := _ExtractTag(path)
-			if err != nil {
-				return err
-			}
-			if len(tag) == 0 {
-				tag = "v0.0.0"
-			}
-			if err := parsedFile.AddRequire(packageName, tag); err != nil {
-				return err
-			}
-			if err := parsedFile.AddReplace(packageName, tag, "./.vendor.gomp/"+path, ""); err != nil {
-				return err
-			}
+	for _, path := range repositories {
+		packageName, tag, err := _ExtractTag(path)
+		if err != nil {
+			return err
 		}
+		if len(tag) == 0 {
+			tag = "v0.0.0"
+		}
+		if err := parsedFile.AddRequire(packageName, tag); err != nil {
+			return err
+		}
+		if err := parsedFile.AddReplace(packageName, tag, "./.vendor.gomp/"+path, ""); err != nil {
+			return err
+		}
+
 	}
 	parsedFile.SortBlocks()
 	result, err := parsedFile.Format()

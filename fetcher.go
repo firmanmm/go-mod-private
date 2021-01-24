@@ -38,12 +38,7 @@ type SshFetcher struct {
 
 func (s *SshFetcher) Fetch() error {
 	targetDir := fmt.Sprintf("./.vendor.gomp/%s", s.name)
-
-	if _, err := os.Lstat(targetDir + "/.git"); err == nil {
-		return s.update(targetDir)
-	}
-
-	cleanDir, err := filepath.Abs(targetDir + "/..")
+	targetDir, err := filepath.Abs(targetDir)
 	if err != nil {
 		return err
 	}
@@ -53,14 +48,18 @@ func (s *SshFetcher) Fetch() error {
 		return err
 	}
 
-	if err := s._Fetch(packageName, tag, cleanDir); err != nil {
+	if _, err := os.Lstat(targetDir + "/.git"); err == nil {
+		return s.update(targetDir)
+	}
+
+	if err := s._Fetch(packageName, tag, targetDir); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (s *SshFetcher) _Fetch(name, tag, cleanDir string) error {
+func (s *SshFetcher) _Fetch(name, tag, targetDir string) error {
 
 	cmdParam := make([]string, 0, 6)
 	cmdParam = append(cmdParam,
@@ -71,7 +70,7 @@ func (s *SshFetcher) _Fetch(name, tag, cleanDir string) error {
 		cmdParam = append(cmdParam,
 			"--branch", tag)
 	}
-	cmdParam = append(cmdParam, s.connString+name, cleanDir+"@"+tag)
+	cmdParam = append(cmdParam, s.connString+name, targetDir)
 	eCmd := exec.Command("git", cmdParam...)
 	eCmd.Stdout = os.Stdout
 	eCmd.Stderr = os.Stderr
